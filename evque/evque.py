@@ -24,7 +24,7 @@ class EvQueue:
     unsubscribe(topic: str, handler: Callable):
         Unsubscribe a handler function from a topic.
 
-    publish(topic: str, delivery_time: int, *args, **kwargs):
+    publish(topic: str, delivery_time: int, *args):
         Publish an event to a topic with a specific delivery time.
 
     run_until(target_time: int):
@@ -98,7 +98,7 @@ class EvQueue:
         if topic in self._topics:
             self._topics[topic].remove(handler)
 
-    def publish(self, topic: str, delivery_time: int, *args, **kwargs):
+    def publish(self, topic: str, delivery_time: int, *args):
         """
         Publish an event to a topic with a specific delivery time.
 
@@ -110,8 +110,6 @@ class EvQueue:
             The time at which the event should be delivered.
         *args : list
             Variable-length argument list to be passed to the event handlers.
-        **kwargs : dict
-            Arbitrary keyword arguments to be passed to the event handlers.
 
         Raises
         ------
@@ -121,7 +119,7 @@ class EvQueue:
         if topic not in self._topics:
             raise KeyError(f"Topic '{topic}' does not exist.")
 
-        event = (delivery_time, topic, args, kwargs)
+        event = (delivery_time, topic, args)
         heapq.heappush(self._events, event)
 
     def run_until(self, target_time: int):
@@ -134,11 +132,11 @@ class EvQueue:
             The time until which events should be processed.
         """
         while self._events and self._events[0][0] <= target_time:
-            event_time, topic, args, kwargs = heapq.heappop(self._events)
+            event_time, topic, args = heapq.heappop(self._events)
 
             if topic in self._topics:
                 for handler in self._topics[topic]:
-                    handler(*args, **kwargs)
+                    handler(*args)
 
     def empty(self) -> bool:
         """
