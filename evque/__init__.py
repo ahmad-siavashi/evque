@@ -1,7 +1,7 @@
-from .evque import EvQueue
+from .evque import EvQue
 
 # Create a singleton instance of EventQueue
-event_queue = EvQueue()
+event_queue = EvQue()
 
 # Expose the functions directly from the singleton instance
 subscribe = event_queue.subscribe

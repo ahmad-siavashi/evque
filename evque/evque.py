@@ -2,7 +2,7 @@ import heapq
 from typing import Callable
 
 
-class EvQueue:
+class EvQue:
     """
     A simple event queue with support for topics.
 
@@ -67,6 +67,7 @@ class EvQueue:
             cls._instance = super().__new__(cls)
             cls._instance._events = []
             cls._instance._topics = {}
+            cls._instance._counter = 0
         return cls._instance
 
     def subscribe(self, topic: str, *handlers: tuple[Callable, ...]):
@@ -120,7 +121,8 @@ class EvQueue:
         if topic not in self._topics:
             raise KeyError(f"Topic '{topic}' does not exist.")
 
-        event = (delivery_time, topic, args)
+        event = (delivery_time, self._counter, topic, args)
+        self._counter += 1
         heapq.heappush(self._events, event)
 
     def run_until(self, target_time: int):
@@ -133,7 +135,7 @@ class EvQueue:
             The time until which events should be processed.
         """
         while self._events and self._events[0][0] <= target_time:
-            event_time, topic, args = heapq.heappop(self._events)
+            event_time, _, topic, args = heapq.heappop(self._events)
 
             if topic in self._topics:
                 for handler in self._topics[topic]:

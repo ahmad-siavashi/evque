@@ -1,14 +1,14 @@
 import unittest
 
-from evque import EvQueue
+from evque import EvQue
 
 
 class TestEvQueue(unittest.TestCase):
     def setUp(self):
-        self.ev_queue = EvQueue()
+        self.ev_queue = EvQue()
 
     def test_singleton(self):
-        another_ev_queue = EvQueue()
+        another_ev_queue = EvQue()
         self.assertIs(self.ev_queue, another_ev_queue)
 
     def test_subscribe_unsubscribe(self):

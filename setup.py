@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='evque',
-    version='1.4.0',
+    version='1.4.1',
     description='A simple event queue library with support for topics.',
     long_description=long_description,
     long_description_content_type="text/markdown",
