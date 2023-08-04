@@ -18,8 +18,8 @@ class EvQueue:
 
     Methods
     -------
-    subscribe(topic: str, handler: Callable):
-        Subscribe a handler function to a topic.
+    subscribe(topic: str, *handlers: tuple[Callable, ...]):
+        Subscribe handler functions to a topic.
 
     unsubscribe(topic: str, handler: Callable):
         Unsubscribe a handler function from a topic.
@@ -69,34 +69,35 @@ class EvQueue:
             cls._instance._topics = {}
         return cls._instance
 
-    def subscribe(self, topic: str, handler: Callable):
+    def subscribe(self, topic: str, *handlers: tuple[Callable, ...]):
         """
-        Subscribe a handler function to a topic.
+        Subscribe handler functions to a topic.
 
         Parameters
         ----------
         topic : str
             The topic to subscribe to.
-        handler : Callable
-            The handler function to be called when events are published to the topic.
+        *handlers : tuple[Callable, ...]
+            The handler functions to be called when events are published to the topic.
         """
         if topic not in self._topics:
             self._topics[topic] = []
-        self._topics[topic].append(handler)
+        self._topics[topic] += handlers
 
-    def unsubscribe(self, topic: str, handler: Callable):
+    def unsubscribe(self, topic: str, *handlers: tuple[Callable, ...]):
         """
-        Unsubscribe a handler function from a topic.
+        Unsubscribe handler functions from a topic.
 
         Parameters
         ----------
         topic :str
             The topic to unsubscribe from.
-        handler : Callable
-            The handler function to be removed from the topic.
+        handlers : tuple[Callable, ...]
+            The handler functions to be removed from the topic.
         """
         if topic in self._topics:
-            self._topics[topic].remove(handler)
+            for handler in handlers:
+                self._topics[topic].remove(handler)
 
     def publish(self, topic: str, delivery_time: int, *args):
         """
